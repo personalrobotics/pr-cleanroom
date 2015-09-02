@@ -1,0 +1,9 @@
+---
+aptcacherng:
+  build: .
+  dockerfile: Dockerfile_apt-cacher-ng
+client:
+  build: .
+  dockerfile: Dockerfile_client
+  links:
+  - aptcacherng
