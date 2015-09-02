@@ -26,7 +26,7 @@ wget -O remote.rosinstall "${rosinstall_uri}"
 wstool merge -y remote.rosinstall
 # TODO: This is a hack until my changes to or_trajopt are merged.
 wstool set -y or_trajopt -v bugfix/dependencies
-wstool update -y
+wstool update
 
 # Delete manifest.xml files because they confuse rosdep.
 find . -name manifest.xml -delete
