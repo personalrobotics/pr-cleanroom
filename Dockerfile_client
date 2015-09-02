@@ -16,7 +16,7 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 RUN locale-gen
 
 # Set environment variable that wstool and rosdep expect.
-# TODO: Template ROS_DISTRO
+# TODO: Template the OS version and ROS_DISTRO.
 ENV TERM xterm
 ENV SHELL /bin/bash
 ENV LANG en_US.UTF-8
@@ -28,6 +28,7 @@ ENV ROS_DISTRO indigo
 RUN apt-get -qq update && apt-get -qq install python-pip wget git mercurial subversion wget
 
 # Add the PR APT repository.
+# TODO: We should download 'pr.key' from a server, just like we do for ROS.
 RUN echo "deb http://packages.personalrobotics.ri.cmu.edu:8765/public $(lsb_release -sc) main" > /etc/apt/sources.list.d/pr.list
 COPY pr.key pr.key
 RUN apt-key add pr.key
@@ -37,28 +38,21 @@ RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc
 RUN wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key
 RUN apt-key add ros.key
 
-## Install ROS. Also initialize rosdep, which is only
-## necessary once immediately after installation. 
+# Install ROS.
 RUN apt-get -qq update && apt-get -qq install ros-${ROS_DISTRO}-ros-base python-catkin-tools python-rosdep python-wstool
-RUN rosdep init
 
 # Setup eatmydata to speed up Apt installation.
+# TODO: This should be combined with the first apt-get install.
 RUN apt-get -qq install eatmydata
 
-# Setup apt-cacher-ng to cache Apt packages.
-RUN echo 'Acquire::http { Proxy "http://aptcacherng:3142"; };' >> /etc/apt/apt.conf.d/01proxy
-#COPY sources.list /etc/apt/sources.list
-#COPY ros.list /etc/apt/sources.list.d/ros.list
+# Initialize rosdep, including our custom rosdep keys.
+RUN rosdep init
+RUN wget -P /etc/ros/rosdep/sources.list.d https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
 
-## Manually install OpenRAVE (this is a hack).
-## TODO: Install OpenRAVE from a .deb package.
-#WORKDIR /home/ubuntu/src
-#RUN wstool set -y openrave https://github.com/personalrobotics/openrave.git --git
-#RUN wstool update openrave
-#RUN wget -P openrave/ https://gist.githubusercontent.com/mkoval/495b40fe828a727987e2/raw/539e5c92babb89ac543cdac49c5276b48d59af8c/package.xml
+# TODO: Setup apt-cacher-ng to cache Apt packages.
+#RUN echo 'Acquire::http { Proxy "http://aptcacherng:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 
-# Create a workspace.
-COPY build-rosinstall.sh build-rosinstall.sh
+# Copy the test script into the Docker container.
+COPY run-internal.sh run-internal.sh
 
-#CMD ./build-rosinstall.sh
 CMD tail -f /var/log/dmesg

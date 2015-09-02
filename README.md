@@ -36,7 +36,7 @@ $ docker-compose up
 ```
 Then, in a different terminal window, run a test on a `.rosinstall` file:
 ```shell
-$ ./run-rosinstall.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
+$ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
 ```
 
 ## Known Issues
