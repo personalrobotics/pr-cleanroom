@@ -25,11 +25,11 @@ ENV LC_ALL en_US.UTF-8
 ENV ROS_DISTRO indigo
 
 # Install bare-bones system utilities.
-RUN apt-get -qq update && apt-get -qq install eatmydata python-pip wget git mercurial subversion wget
+RUN apt-get -qq update && apt-get -qq install curl eatmydata python-pip wget git mercurial subversion wget
 
 # Add the PR APT repository.
 # TODO: We should download 'pr.key' from a server, just like we do for ROS.
-RUN echo "deb http://packages.personalrobotics.ri.cmu.edu:8765/public $(lsb_release -sc) main" > /etc/apt/sources.list.d/pr.list
+RUN echo "deb http://packages.personalrobotics.ri.cmu.edu/public $(lsb_release -sc) main" > /etc/apt/sources.list.d/pr.list
 COPY pr.key pr.key
 RUN apt-key add pr.key
 
