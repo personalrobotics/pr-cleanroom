@@ -1,8 +1,12 @@
 # pr-cleanroom
-Utilities for testing the installation of the Personal Robotics Lab software in a clean environment.
+pr-cleanroom automates the testing of Personal Robotics Lab packages in a clean environment. This package operates on `.rosinstall` files, typically downloaded from the [`pr-rosinstalls` repository](https://github.com/personalrobotics/pr-rosinstalls), and:
+
+1. Checks out the input `.rosinstall` file(s)
+2. Installs system dependencies using `rosdep`
+3. Builds the workspace using `catkin build`
+4. Runs unit tests
 
 ## Dependencies
-### Docker
 This package uses Docker to create a clean build environment. Follow [these
 instructions](https://docs.docker.com/installation/ubuntulinux/#installation)
 to install Docker on Ubuntu. The short version is:
@@ -15,34 +19,14 @@ $ curl -sSL https://get.docker.com/ | sh
 $ sudo usermod -aG docker <YOUR_USER_NAME> # optional
 ```
 
-At this point you will need to log out and log back in.
-
-## Docker Compose
-This package uses [Docker Compose](https://docs.docker.com/compose/) to manage
-building and running multiple Docker containers. Follow [these
-instructions](https://docs.docker.com/compose/install/#install-docker-compose)
-to install Docker Compose on Ubuntu. The short version is:
-
-```shell
-$ curl -L https://github.com/docker/compose/releases/download/VERSION_NUM/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-$ chmod +x /usr/local/bin/docker-compose
-```
-
 ## Usage
-First, use Docker Compose to launch the `docker-compose.yml` file:
+This utility operates `.rosinstall` files using `wstool`, which supports both local paths and `http(s)` URIs as input. For example, this command tests our workspace for running HERB in simulation
 ```shell
-$ docker-compose build
-$ docker-compose up
-```
-Then, in a different terminal window, run a test on a `.rosinstall` file:
-```shell
-$ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
+$ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/herb-minimal-sim.rosinstall
 ```
 
-## Known Issues
-
-- The Docker container must be restarted after each time the
-  `build-rosinstall.sh` script is run, otherwise dependencies may persist
-  between queries.
-- The `build-rosinstall.sh` script is not re-entrant.
-
+You can also pass multiple `.rosinstall` files. These will be combined into a single `.rosinstall` file by sequentially running the `wstool merge -y`. For example, simultaneously tests running both ADA and HERB in simulation: 
+```shell
+$ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/herb-minimal-sim.rosinstall \
+           https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/ada-sim.rosinstall
+```
