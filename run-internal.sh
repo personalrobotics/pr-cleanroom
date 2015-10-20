@@ -33,3 +33,14 @@ catkin build --catkin-make-args tests
 
 echo "Running tests."
 catkin build --catkin-make-args run_tests
+
+echo "Copying test results."
+build_path="/build"
+output_path="/test_results"
+
+for package_name in $(ls "${build_path}"); do
+    if [ -d "${build_path}/${package_name}/test_results/${package_name}" ]; then
+        echo "Copying test results for package '${package_name}'."
+        cp -r "${build_path}/${package_name}/test_results/${package_name}" "${output_path}/${package_name}"
+    fi
+done

@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ros:indigo-ros-base
 MAINTAINER Michael Koval <mkoval@cs.cmu.edu>
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -25,28 +25,14 @@ ENV LC_ALL en_US.UTF-8
 ENV ROS_DISTRO indigo
 
 # Install bare-bones system utilities.
-RUN apt-get -qq update && apt-get -qq install curl eatmydata python-pip wget git mercurial subversion wget
+RUN apt-get -qq update && apt-get -qq install curl eatmydata python-catkin-tools python-pip python-wstool git mercurial subversion wget
 
 # Add the PR APT repository.
-# TODO: We should download 'pr.key' from a server, just like we do for ROS.
+RUN wget -qO - https://www.personalrobotics.ri.cmu.edu/files/personalrobotics.gpg | apt-key add -
 RUN echo "deb http://packages.personalrobotics.ri.cmu.edu/public $(lsb_release -sc) main" > /etc/apt/sources.list.d/pr.list
-COPY pr.key pr.key
-RUN apt-key add pr.key
 
-# Add ROS APT repository.
-RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros.list
-RUN wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key
-RUN apt-key add ros.key
-
-# Install ROS.
-RUN apt-get -qq update && eatmydata apt-get -qq install ros-${ROS_DISTRO}-ros-base python-catkin-tools python-rosdep python-wstool
-
-# Initialize rosdep, including our custom rosdep keys.
-RUN rosdep init
+# Add our custom rosdep keys
 RUN wget -P /etc/ros/rosdep/sources.list.d https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
-
-# Cache Apt packages using apt-cacher-ng.
-RUN echo 'Acquire::http { Proxy "http://apt-cacher-ng:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 
 # Copy the test script into the Docker container.
 COPY run-internal.sh run-internal.sh
