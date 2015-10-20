@@ -27,5 +27,6 @@ $ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/mas
 
 You can also pass multiple `.rosinstall` files. These will be combined into a single `.rosinstall` file by sequentially running the `wstool merge -y`. For example, simultaneously tests running both ADA and HERB in simulation: 
 ```shell
-$ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/herb-minimal-sim.rosinstall https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/ada-sim.rosinstall
+$ ./run.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/herb-minimal-sim.rosinstall \
+           https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/ada-sim.rosinstall
 ```
