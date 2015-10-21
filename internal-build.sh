@@ -36,6 +36,7 @@ for package_name in $(ls "${build_path}"); do
 done
 
 echo "Displaying test results:"
+cd ..
 ./view-all-results.sh "${output_path}"
 
 # Generate a non-zero return code if any of the tests failed.
