@@ -221,7 +221,25 @@ def main():
             print('  Depends on:', ' '.join(
                 sorted(map(annotate_package_name, known_depends))))
 
+        done_packages.add(package.name)
         pending_packages.update(known_depends)
+
+    # Print a summary and generate CATKIN_IGNORE files for installed packages
+    # that we do not explicitly depend on.
+    for package_name in installed_packages:
+        package = package_map[package_name]
+
+        if package_name not in done_packages:
+            catkin_ignore_path = os.path.join(package.location, 'CATKIN_IGNORE')
+            with open(catkin_ignore_path, 'wb'):
+                pass
+
+            suffix = ' [IGNORED]'
+        else:
+            suffix = ''
+
+        print('Package "{:s}" => {:s}{:s}'.format(package.name, package.location, suffix))
+
 
 if __name__ == '__main__':
     main()
