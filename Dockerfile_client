@@ -35,6 +35,6 @@ RUN echo "deb http://packages.personalrobotics.ri.cmu.edu/public $(lsb_release -
 RUN wget -P /etc/ros/rosdep/sources.list.d https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
 
 # Copy the test script into the Docker container.
-COPY internal-build.sh internal-distro.py internal-wstool.sh /
+COPY internal-build.sh internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
 
 CMD tail -f /var/log/dmesg

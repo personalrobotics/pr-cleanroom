@@ -35,5 +35,8 @@ for package_name in $(ls "${build_path}"); do
     fi
 done
 
-echo "Summary:"
-catkin_test_results --all /test_results
+echo "Displaying test results:"
+./view-all-results.sh "${output_path}"
+
+# Generate a non-zero return code if any of the tests failed.
+catkin_test_results /test_results
