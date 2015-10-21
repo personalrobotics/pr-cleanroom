@@ -34,3 +34,6 @@ for package_name in $(ls "${build_path}"); do
         cp -r "${build_path}/${package_name}/test_results/${package_name}" "${output_path}/${package_name}"
     fi
 done
+
+echo "Summary:"
+catkin_test_results --all /test_results
