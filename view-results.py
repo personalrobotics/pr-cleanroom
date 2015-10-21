@@ -4,6 +4,19 @@ from xml.etree import ElementTree
 import argparse
 
 
+class Color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+
 class TestSuite(object):
     def __init__(self, element=None):
         self.element = element
@@ -14,11 +27,49 @@ class TestSuite(object):
     def name(self):
         return self.element.attrib['name']
 
+    @property
+    def num_tests(self):
+        return int(self.element.attrib['tests'])
+
+    @property
+    def num_succeeded(self):
+        return self.num_tests - self.num_disabled - self.num_failed
+
+    @property
+    def num_disabled(self):
+        num_disabled = self.element.attrib.get('num_disabled')
+        if num_disabled is not None:
+            return int(num_disabled) # gtest uses num_disabled
+
+        num_skipped = self.element.attrib.get('num_skipped')
+        if num_skipped is not None:
+            return int(num_skipped) # nosetest uses num_skipped
+
+        return 0
+
+    @property
+    def num_failed(self):
+        return int(self.element.attrib['failures'])
 
 class TestFixture(object):
     def __init__(self, name):
         self.name = name
         self.tests = []
+
+    @property
+    def num_succeeded(self):
+        return sum(int(test.is_successful)
+                   for test in self.tests)
+
+    @property
+    def num_disabled(self):
+        return sum(int(not test.is_run)
+                   for test in self.tests)
+
+    @property
+    def num_failed(self):
+        return sum(int(test.is_run and not test.is_successful)
+                   for test in self.tests)
 
 
 class Test(object):
@@ -38,15 +89,6 @@ class Test(object):
         return self.element.attrib.get('status', 'run') == 'run'
 
     @property
-    def status(self):
-        if not self.is_run:
-            return 'skipped'
-        elif self.is_successful:
-            return 'succeeded'
-        else:
-            return 'failed'
-
-    @property
     def failures(self):
         for child_element in self.element.getchildren():
             if child_element.tag == 'failure':
@@ -57,6 +99,7 @@ class Test(object):
                     yield '{:s}: {:s}'.format(error_type, error_message)
                 else:
                     yield error_message
+
 
 def parse(element, fixture_map):
     if element.tag == 'testcase':
@@ -98,6 +141,37 @@ def get_indent(n):
     return ' ' * n
 
 
+def get_formatted_header(title):
+    return Color.BOLD + title + Color.END
+
+
+def get_formatted_status(node):
+    if not node.is_run:
+        return Color.YELLOW + 'skipped' + Color.END
+    elif node.is_successful:
+        return Color.GREEN + 'succeeded' + Color.END
+    else:
+        return Color.RED + 'failed' + Color.END
+
+
+def get_formatted_summary(node):
+    warnings = []
+
+    if node.num_succeeded > 0:
+        warnings.append('{:d} {:s}'.format(node.num_succeeded, 'succeeded'))
+
+    if node.num_failed > 0:
+        warnings.append('{:d} {:s}'.format(node.num_failed, Color.RED + 'failed' + Color.END))
+
+    if node.num_disabled > 0:
+        warnings.append('{:d} {:s}'.format(node.num_disabled, Color.YELLOW + 'skipped' + Color.END))
+
+    if warnings:
+        return ', '.join(warnings)
+    else:
+        return 'empty'
+
+
 def output(node, indent=0):
     if node is None:
         pass
@@ -107,14 +181,24 @@ def output(node, indent=0):
             output(child_node, indent=indent)
 
     elif isinstance(node, Test):
-        print '{:s}+ Test: {:s} ({:s})'.format(get_indent(indent), node.name, node.status)
+        print '{:s}+ {:s} ({:s})'.format(get_indent(indent), node.name, get_formatted_status(node))
 
     elif isinstance(node, TestFixture):
-        print '{:s}+ Fixture: {:s}'.format(get_indent(indent), node.name)
+        warnings_str = get_formatted_summary(node)
+        if warnings_str:
+            print '{:s}+ {:s} - {:s}'.format(get_indent(indent), get_formatted_header(node.name), warnings_str)
+        else:
+            print '{:s}+ {:s}'.format(get_indent(indent), get_formatted_header(node.name))
+
         output(node.tests, indent=indent + 1)
 
     elif isinstance(node, TestSuite):
-        print '{:s}+ Suite: {:s}'.format(get_indent(indent), node.name)
+        warnings_str = get_formatted_summary(node)
+        if warnings_str:
+            print '{:s}+ {:s} - {:s}'.format(get_indent(indent), get_formatted_header(node.name), warnings_str)
+        else:
+            print '{:s}+ {:s}'.format(get_indent(indent), get_formatted_header(node.name))
+
         output(node.fixtures.values(), indent=indent + 1)
         output(node.tests, indent=indent + 1)
 
@@ -153,10 +237,6 @@ def main():
         tree = ElementTree.parse(input_file)
 
     root = tree.getroot()
-
-    num_tests = int(root.attrib['tests'])
-    num_errors = int(root.attrib['errors'])
-    num_failures = int(root.attrib['failures'])
 
     root_fixtures = dict()
     root_node = parse(tree.getroot(), root_fixtures)
