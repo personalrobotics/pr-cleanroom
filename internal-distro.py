@@ -74,9 +74,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--workspace', type=str, default='.')
     parser.add_argument('distribution_file', type=str)
-    parser.add_argument('--package', type=str, action='list_append', destvar='target_packages')
-    parser.add_argument('--repository', type=str, action='list_append', destvar='target_repositories')
+    parser.add_argument('--package', type=str, action='append', dest='target_packages', default=[])
+    parser.add_argument('--repository', type=str, action='append', dest='target_repositories', default=[])
     args = parser.parse_args()
+
+    os.makedirs(args.workspace)
 
     # Load the distribution file.
     with open(args.distribution_file, 'rb') as distribution_file:

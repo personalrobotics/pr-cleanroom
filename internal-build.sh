@@ -1,19 +1,9 @@
 #!/bin/bash -e
 
 echo "Creating Catkin workspace."
-wstool init src
 catkin init
 catkin config --extend "/opt/ros/${ROS_DISTRO}" --cmake-args -DCMAKE_BUILD_TYPE=Release
 cd src
-
-echo "Merging .rosinstall files."
-for rosinstall_uri in "$@"; do
-    wstool merge -y "${rosinstall_uri}"
-done
-
-echo "Checking out repositories."
-git config --global credential.helper cache
-wstool update
 
 # Delete manifest.xml files because they confuse rosdep.
 echo "Deleting 'manifest.xml' files."

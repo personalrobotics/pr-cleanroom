@@ -20,6 +20,6 @@ docker run -it \
     --volume=${test_dir}:/test_results \
     --volume=${staging_dir}:/rosinstalls \
     pr-cleanroom \
-    ./run-internal.sh ${staged_uris[@]}
+    bash -c "./internal-wstool.sh ${staged_uris[@]} && ./internal-build.sh"
 
 echo "Test results are in: ${test_dir}"
