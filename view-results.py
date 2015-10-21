@@ -5,11 +5,14 @@ import argparse
 
 
 class TestSuite(object):
-    def __init__(self, name, element=None):
-        self.name = name
+    def __init__(self, element=None):
         self.element = element
         self.tests = []
         self.fixtures = dict()
+
+    @property
+    def name(self):
+        return self.element.attrib['name']
 
 
 class TestFixture(object):
@@ -19,14 +22,45 @@ class TestFixture(object):
 
 
 class Test(object):
-    def __init__(self, name, element):
-        self.name = name
+    def __init__(self, element):
         self.element = element
 
+    @property
+    def name(self):
+        return self.element.attrib['name']
+
+    @property
+    def is_successful(self):
+        return self.is_run and not list(self.failures)
+
+    @property
+    def is_run(self):
+        return self.element.attrib.get('status', 'run') == 'run'
+
+    @property
+    def status(self):
+        if not self.is_run:
+            return 'skipped'
+        elif self.is_successful:
+            return 'succeeded'
+        else:
+            return 'failed'
+
+    @property
+    def failures(self):
+        for child_element in self.element.getchildren():
+            if child_element.tag == 'failure':
+                error_type = child_element.attrib.get('type', '')
+                error_message = child_element.attrib.get('message', 'unknown')
+
+                if error_type:
+                    yield '{:s}: {:s}'.format(error_type, error_message)
+                else:
+                    yield error_message
 
 def parse(element, fixture_map):
     if element.tag == 'testcase':
-        test = Test(element.attrib['name'], element)
+        test = Test(element)
 
         classname = element.attrib.get('classname')
         if classname is not None:
@@ -40,7 +74,7 @@ def parse(element, fixture_map):
         else:
             return test
     elif element.tag == 'testsuite':
-        suite = TestSuite(element.attrib['name'], element)
+        suite = TestSuite(element)
 
         for child_element in element.getchildren():
             child_output = parse(child_element, suite.fixtures)
@@ -59,8 +93,10 @@ def parse(element, fixture_map):
     else:
         return None
 
+
 def get_indent(n):
     return ' ' * n
+
 
 def output(node, indent=0):
     if node is None:
@@ -71,7 +107,7 @@ def output(node, indent=0):
             output(child_node, indent=indent)
 
     elif isinstance(node, Test):
-        print '{:s}+ Test: {:s}'.format(get_indent(indent), node.name)
+        print '{:s}+ Test: {:s} ({:s})'.format(get_indent(indent), node.name, node.status)
 
     elif isinstance(node, TestFixture):
         print '{:s}+ Fixture: {:s}'.format(get_indent(indent), node.name)
@@ -85,11 +121,13 @@ def output(node, indent=0):
     else:
         raise TypeError('Node "{:s} has unknown type.'.format(node))
 
+
 def collapse_nosetest(nodes):
     if len(nodes) == 1 and isinstance(nodes[0], TestSuite) and nodes[0].name == 'nosetests':
         return nodes[0].fixtures.values() + nodes[0].tests
     else:
         return nodes
+
 
 def collapse_gtest(node):
     if node is None:
@@ -104,6 +142,7 @@ def collapse_gtest(node):
             node.fixtures = dict()
 
     return node
+
 
 def main():
     parser = argparse.ArgumentParser()
