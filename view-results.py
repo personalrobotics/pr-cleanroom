@@ -85,6 +85,26 @@ def output(node, indent=0):
     else:
         raise TypeError('Node "{:s} has unknown type.'.format(node))
 
+def collapse_nosetest(nodes):
+    if len(nodes) == 1 and isinstance(nodes[0], TestSuite) and nodes[0].name == 'nosetests':
+        return nodes[0].fixtures.values() + nodes[0].tests
+    else:
+        return nodes
+
+def collapse_gtest(node):
+    if node is None:
+        pass
+    elif isinstance(node, list):
+        for child_node in node:
+            collapse_gtest(child_node)
+    elif isinstance(node, TestSuite):
+        if len(node.fixtures) == 1 and node.fixtures.keys()[0] == node.name:
+            fixture = node.fixtures.values()[0]
+            node.tests += fixture.tests
+            node.fixtures = dict()
+
+    return node
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file', type=str)
@@ -101,8 +121,12 @@ def main():
 
     root_fixtures = dict()
     root_node = parse(tree.getroot(), root_fixtures)
+    root_nodes = root_fixtures.values() + [root_node]
 
-    output(root_fixtures.values() + [root_node])
+    root_nodes = collapse_nosetest(root_nodes)
+    root_nodes = collapse_gtest(root_nodes)
+
+    output(root_nodes)
 
 
 if __name__ == '__main__':
