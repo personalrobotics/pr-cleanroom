@@ -183,6 +183,16 @@ def output(node, indent=0):
     elif isinstance(node, Test):
         print '{:s}+ {:s} ({:s})'.format(get_indent(indent), node.name, get_formatted_status(node))
 
+        has_failure = False
+        for failure in node.failures:
+            print '-' * 80
+            print failure
+            has_failure = True
+
+        if has_failure:
+            print '-' * 80
+            print
+
     elif isinstance(node, TestFixture):
         warnings_str = get_formatted_summary(node)
         if warnings_str:
