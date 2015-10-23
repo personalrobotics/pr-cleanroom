@@ -1,4 +1,4 @@
-FROM ros:indigo-ros-base
+FROM personalrobotics/openrave:latest
 MAINTAINER Michael Koval <mkoval@cs.cmu.edu>
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -26,10 +26,6 @@ ENV ROS_DISTRO indigo
 
 # Install bare-bones system utilities.
 RUN apt-get -qq update && apt-get -qq install curl eatmydata python-catkin-tools python-pip python-wstool git mercurial subversion wget
-
-# Add the PR APT repository.
-RUN wget -qO - https://www.personalrobotics.ri.cmu.edu/files/personalrobotics.gpg | apt-key add -
-RUN echo "deb http://packages.personalrobotics.ri.cmu.edu/public $(lsb_release -sc) main" > /etc/apt/sources.list.d/pr.list
 
 # Add our custom rosdep keys
 RUN wget -P /etc/ros/rosdep/sources.list.d https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
