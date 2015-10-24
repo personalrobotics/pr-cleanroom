@@ -1,36 +1,8 @@
-FROM personalrobotics/openrave:latest
+FROM ubuntu:trusty
 MAINTAINER Michael Koval <mkoval@cs.cmu.edu>
 ENV DEBIAN_FRONTEND noninteractive
 
-# Create non-root user 'ubuntu' with sudo access.
-RUN groupadd ubuntu
-RUN useradd -g ubuntu -G sudo ubuntu
-RUN echo ubuntu:u | chpasswd
-RUN cp -a /etc/skel /home/ubuntu
-RUN chown -R ubuntu:ubuntu /home/ubuntu
-RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
-
-# Set up Perl locales to avoid tons of warnings.
-RUN apt-get -qq update && apt-get -qq install locales
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-RUN locale-gen
-
-# Set environment variable that wstool and rosdep expect.
-# TODO: Template the OS version and ROS_DISTRO.
-ENV TERM xterm
-ENV SHELL /bin/bash
-ENV LANG en_US.UTF-8
-ENV LANGUAGE=en_US
-ENV LC_ALL en_US.UTF-8
-ENV ROS_DISTRO indigo
-
-# Install bare-bones system utilities.
-RUN apt-get -qq update && apt-get -qq install curl eatmydata python-catkin-tools python-pip python-wstool git mercurial subversion wget
-
-# Add our custom rosdep keys
-RUN wget -P /etc/ros/rosdep/sources.list.d https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list
-
-# Copy the test script into the Docker container.
-COPY internal-build.sh internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
+COPY internal-setup.sh internal-build.sh internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
+RUN ./internal-setup.sh
 
 CMD tail -f /var/log/dmesg
