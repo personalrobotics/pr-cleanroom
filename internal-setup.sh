@@ -1,7 +1,6 @@
 #!/bin/bash -e
 APTGET='apt-get -qqy'
 CURL='curl -sS'
-PIP='pip'
 SUDO='sudo -n'
 
 set -x
@@ -26,8 +25,6 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   python-vcstools \
   ros-indigo-ros-core \
   subversion
-
-${SUDO} ${PIP} install --disable-pip-version-check --force-reinstall vcstools
 
 # Add the PR apt repository.
 ${CURL} 'https://www.personalrobotics.ri.cmu.edu/files/personalrobotics.gpg' | ${SUDO} apt-key add -
