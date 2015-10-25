@@ -20,6 +20,7 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   python-rosdep \
   python-rosinstall \
   python-wstool \
+  python-vcstools \
   ros-indigo-ros-core \
   subversion
 
