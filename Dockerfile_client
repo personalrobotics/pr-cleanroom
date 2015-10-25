@@ -4,5 +4,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 COPY internal-setup.sh internal-build.sh internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
 RUN ./internal-setup.sh
+RUN rm -rf /var/lib/apt/lists/*
 
 CMD tail -f /var/log/dmesg
