@@ -21,7 +21,8 @@ rosdep update
 rosdep install -y --ignore-src --rosdistro=indigo --from-paths src
 
 ${CATKIN_BUILD} -- "$@"
-. devel/setup.bash
+
+set +x; . devel/setup.bash; set -x
 
 ${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
 ${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
@@ -35,8 +36,7 @@ for package_name in $(ls "${BUILD_PATH}"); do
         cp -r "${BUILD_PATH}/${package_name}/test_results/${package_name}" "${OUTPUT_PATH}/${package_name}"
     fi
 done
-
-echo
 set -x
+
 ./view-all-results.sh "${OUTPUT_PATH}"
 catkin_test_results "${OUTPUT_PATH}"
