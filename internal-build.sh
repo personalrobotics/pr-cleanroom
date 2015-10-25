@@ -1,20 +1,12 @@
 #!/bin/bash -e
 SUDO='sudo -n'
 CATKIN_BUILD='catkin build --no-status'
+
 BUILD_PATH="/build"
 OUTPUT_PATH="/test_results"
 
 export SHELL="${SHELL=/bin/bash}"
 export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
-
-if [ "$#" -ne 1 ]; then
-  echo 'error: incorrect number of arguments' 1>&2
-  echo 'usage: ./internal-build.sh <repository>' 1>&2
-  exit 1
-fi
-
-repository="$1"
-package_names="${@:2}"
 
 set -x
 
@@ -28,9 +20,9 @@ ${SUDO} apt-get update
 rosdep update
 rosdep install -y --ignore-src --rosdistro=indigo --from-paths .
 
-${CATKIN_BUILD} -- ${package_names}
-${CATKIN_BUILD} --no-deps --catkin-make-args tests -- ${package_names}
-${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- ${package_names}
+${CATKIN_BUILD} -- "$@"
+${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
+${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
 
 for package_name in $(ls "${BUILD_PATH}"); do
     if [ -d "${BUILD_PATH}/${package_name}/test_results/${package_name}" ]; then
