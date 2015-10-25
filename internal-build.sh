@@ -28,8 +28,8 @@ rosdep update
 rosdep install -y --ignore-src --rosdistro=indigo --from-paths .
 
 ${CATKIN_BUILD} -- ${package_names}
-${CATKIN_BUILD} --catkin-make-args tests -- ${package_names}
-${CATKIN_BUILD} --catkin-make-args run_tests -- ${package_names}
+${CATKIN_BUILD} --no-deps --catkin-make-args tests -- ${package_names}
+${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- ${package_names}
 
 for package_name in $(ls "${BUILD_PATH}"); do
     if [ -d "${BUILD_PATH}/${package_name}/test_results/${package_name}" ]; then
