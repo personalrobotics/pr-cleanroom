@@ -16,6 +16,7 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   git \
   mercurial \
   python-catkin-tools \
+  python-pip \
   python-rosdep \
   python-rosinstall \
   python-wstool \

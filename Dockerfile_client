@@ -2,8 +2,10 @@ FROM ubuntu:trusty
 MAINTAINER Michael Koval <mkoval@cs.cmu.edu>
 ENV DEBIAN_FRONTEND noninteractive
 
-COPY internal-setup.sh internal-build.sh internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
+COPY internal-setup.sh /
 RUN ./internal-setup.sh
 RUN rm -rf /var/lib/apt/lists/*
+
+COPY internal-build.sh internal-get-packages.py internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
 
 CMD tail -f /var/log/dmesg
