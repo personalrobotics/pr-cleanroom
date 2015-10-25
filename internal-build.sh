@@ -1,4 +1,5 @@
 #!/bin/bash -e
+SUDO='sudo -n'
 CATKIN_BUILD='catkin_build --no-status'
 BUILD_PATH="/build"
 OUTPUT_PATH="/test_results"
@@ -23,7 +24,7 @@ cd src
 
 find . -name manifest.xml -delete
 
-apt-get update
+${SUDO} apt-get update
 rosdep update
 rosdep install -y --ignore-src --rosdistro=indigo --from-paths .
 
