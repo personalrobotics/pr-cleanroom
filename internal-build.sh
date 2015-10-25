@@ -11,20 +11,21 @@ export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
 
 set -x
 catkin init
-catkin config --extend "/opt/ros/indigo" --cmake-args -DCMAKE_BUILD_TYPE=Release
-cd src
+catkin config --extend /opt/ros/indigo --cmake-args -DCMAKE_BUILD_TYPE=Release
 
-find . -name manifest.xml -delete
+# Delete 'manifest.xml' files because they confuse rosdep.
+find src -name manifest.xml -delete
 
 ${SUDO} apt-get update
 rosdep update
-rosdep install -y --ignore-src --rosdistro=indigo --from-paths .
+rosdep install -y --ignore-src --rosdistro=indigo --from-paths src
 
 ${CATKIN_BUILD} -- "$@"
+. devel/setup.bash
+
 ${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
 ${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
 
-cd ..
 ${MKDIR} "${OUTPUT_PATH}"
 
 set +x
@@ -35,7 +36,7 @@ for package_name in $(ls "${BUILD_PATH}"); do
     fi
 done
 
+echo
 set -x
 ./view-all-results.sh "${OUTPUT_PATH}"
-
-catkin_test_results /test_results
+catkin_test_results "${OUTPUT_PATH}"
