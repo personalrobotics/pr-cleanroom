@@ -1,6 +1,6 @@
 #!/bin/bash -e
 SUDO='sudo -n'
-CATKIN_BUILD='catkin_build --no-status'
+CATKIN_BUILD='catkin build --no-status'
 BUILD_PATH="/build"
 OUTPUT_PATH="/test_results"
 
