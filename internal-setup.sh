@@ -1,7 +1,9 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 APTGET='apt-get -qqy'
 CURL='curl -sS'
 SUDO='sudo -n'
+
+set -x
 
 # Add the ROS apt repository.
 ${SUDO} apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
