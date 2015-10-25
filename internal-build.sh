@@ -24,6 +24,7 @@ ${CATKIN_BUILD} -- "$@"
 ${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
 ${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
 
+cd ..
 ${MKDIR} "${OUTPUT_PATH}"
 
 set +x
@@ -34,7 +35,6 @@ for package_name in $(ls "${BUILD_PATH}"); do
     fi
 done
 
-cd ..
 set -x
 ./view-all-results.sh "${OUTPUT_PATH}"
 
