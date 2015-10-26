@@ -36,7 +36,5 @@ for package_name in $(ls "${BUILD_PATH}"); do
         cp -r "${BUILD_PATH}/${package_name}/test_results/${package_name}" "${OUTPUT_PATH}/${package_name}"
     fi
 done
-set -x
 
-./view-all-results.sh "${OUTPUT_PATH}"
 catkin_test_results "${OUTPUT_PATH}"

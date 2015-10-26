@@ -78,7 +78,11 @@ def main():
     parser.add_argument('--repository', type=str, action='append', dest='target_repositories', default=[])
     args = parser.parse_args()
 
-    os.makedirs(args.workspace)
+    if not os.path.exists(args.workspace):
+        os.makedirs(args.workspace)
+
+    if not os.path.isdir(args.workspace):
+        raise ValueError('Workspace "{:s}" is not a directory.'.format(args.workspace))
 
     # Load the distribution file.
     with open(args.distribution_file, 'rb') as distribution_file:

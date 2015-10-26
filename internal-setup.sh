@@ -31,5 +31,5 @@ ${CURL} 'https://www.personalrobotics.ri.cmu.edu/files/personalrobotics.gpg' | $
 ${SUDO} sh -c 'echo "deb http://packages.personalrobotics.ri.cmu.edu/public trusty main" > /etc/apt/sources.list.d/personalrobotics.list'
 
 # Setup rosdep with our custom keys.
-${SUDO} rosdep init
+${SUDO} rosdep init || true
 ${SUDO} ${CURL} -o '/etc/ros/rosdep/sources.list.d/10-pr.list' 'https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list'

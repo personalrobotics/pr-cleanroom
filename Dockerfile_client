@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM personalrobotics/openrave
 MAINTAINER Michael Koval <mkoval@cs.cmu.edu>
 ENV DEBIAN_FRONTEND noninteractive
 
