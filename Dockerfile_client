@@ -6,6 +6,6 @@ COPY internal-setup.sh /
 RUN ./internal-setup.sh
 RUN rm -rf /var/lib/apt/lists/*
 
-COPY internal-build.sh internal-get-packages.py internal-distro.py internal-wstool.sh view-results.py view-all-results.sh /
+COPY internal-build.sh internal-get-packages.py internal-distro.py internal-wstool.sh internal-test.sh view-results.py view-all-results.sh /
 
 CMD tail -f /var/log/dmesg

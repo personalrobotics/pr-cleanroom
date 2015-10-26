@@ -51,6 +51,10 @@ class TestSuite(object):
     def num_failed(self):
         return int(self.element.attrib['failures'])
 
+    @property
+    def num_errored(self):
+        return int(self.element.attrib['errors'])
+
 class TestFixture(object):
     def __init__(self, name):
         self.name = name
@@ -67,8 +71,13 @@ class TestFixture(object):
                    for test in self.tests)
 
     @property
+    def num_errored(self):
+        return sum(int(test.is_run and test.is_errored)
+                   for test in self.tests)
+
+    @property
     def num_failed(self):
-        return sum(int(test.is_run and not test.is_successful)
+        return sum(int(test.is_run and test.is_failed)
                    for test in self.tests)
 
 
@@ -82,11 +91,32 @@ class Test(object):
 
     @property
     def is_successful(self):
-        return self.is_run and not list(self.failures)
+        return self.is_run and not self.is_failed and not self.is_errored
+
+    @property
+    def is_errored(self):
+        return bool(list(self.errors))
+
+    @property
+    def is_failed(self):
+        return bool(list(self.failures))
 
     @property
     def is_run(self):
         return self.element.attrib.get('status', 'run') == 'run'
+
+    @property
+    def errors(self):
+        for child_element in self.element.getchildren():
+            if child_element.tag == 'error':
+                error_type = child_element.attrib.get('type', '')
+                error_message = child_element.attrib.get('message', 'unknown')
+
+                if error_type:
+                    yield '{:s}: {:s}\n\n{:s}'.format(
+                        error_type, error_message, child_element.text)
+                else:
+                    yield error_message
 
     @property
     def failures(self):
@@ -150,8 +180,12 @@ def get_formatted_status(node):
         return Color.YELLOW + 'skipped' + Color.END
     elif node.is_successful:
         return Color.GREEN + 'succeeded' + Color.END
-    else:
+    elif list(node.failures):
         return Color.RED + 'failed' + Color.END
+    elif list(node.errors):
+        return Color.RED + 'error' + Color.END
+    else:
+        return Color.RED + 'unknown failure' + Color.END
 
 
 def get_formatted_summary(node):
@@ -162,6 +196,9 @@ def get_formatted_summary(node):
 
     if node.num_failed > 0:
         warnings.append('{:d} {:s}'.format(node.num_failed, Color.RED + 'failed' + Color.END))
+
+    if node.num_errored > 0:
+        warnings.append('{:d} {:s}'.format(node.num_errored, Color.RED + 'errors' + Color.END))
 
     if node.num_disabled > 0:
         warnings.append('{:d} {:s}'.format(node.num_disabled, Color.YELLOW + 'skipped' + Color.END))
@@ -184,7 +221,7 @@ def output(node, indent=0):
         print '{:s}+ {:s} ({:s})'.format(get_indent(indent), node.name, get_formatted_status(node))
 
         has_failure = False
-        for failure in node.failures:
+        for failure in list(node.failures) + list(node.errors):
             print '-' * 80
             print failure
             has_failure = True
