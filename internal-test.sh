@@ -6,18 +6,20 @@ OUTPUT_PATH='test_results'
 export SHELL="${SHELL=/bin/bash}"
 export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
 
-if [ "$#" -eq 0 ]; then
-    echo 'error: no packages were specified' 1>&2
-    echo 'usage: internal-test.sh package1 [package2 [...]]' 1>&2
-    exit 1
-fi
-
 . devel/setup.bash
 
-set -x
-${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
-${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
-set +x
+if [ "$#" -eq 0 ]; then
+    set -x
+    ${CATKIN_BUILD} --catkin-make-args tests
+    ${CATKIN_BUILD} --catkin-make-args run_tests
+    set +x
+else
+    set -x
+    ${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
+    ${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
+    set +x
+fi
+
 
 mkdir -p "${OUTPUT_PATH}"
 

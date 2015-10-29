@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+if [ "$#" -ne 2 ]; then
+    echo "error: incorrect number of arguments" 1>&2
+    echo "usage: run-distro.sh <distribution.yaml> <repository>" 1>&2
+    exit 1
+fi
+
 distribution_uri="$1"
 repository="$2"
 package_names="$(./internal-get-packages.py ${distribution_uri} ${repository})"
@@ -17,4 +23,4 @@ docker run -it \
           && ./internal-build.sh ${package_names} \
           && ./internal-test.sh ${package_names}"
 
-echo "Test results are in: ${test_dir}"
+./view-all-results.sh "${test_dir}"

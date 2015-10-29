@@ -2,12 +2,6 @@
 SUDO='sudo -n'
 CATKIN_BUILD='catkin build --no-status'
 
-if [ "$#" -eq 0 ]; then
-    echo 'error: no packages were specified' 1>&2
-    echo 'usage: internal-build.sh package1 [package2 [...]]' 1>&2
-    exit 1
-fi
-
 export SHELL="${SHELL=/bin/bash}"
 export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
 
