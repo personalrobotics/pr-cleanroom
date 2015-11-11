@@ -36,25 +36,14 @@ $ ./run-wstool.sh https://raw.githubusercontent.com/personalrobotics/pr-rosinsta
 ```
 
 # Usage: distro
-The `run-distro.sh` tests a single package (or list of packages) after building
-them, and any dependencies, from source. The location of source dependencies
-are checked out from the locations specified in a [distribution
+The `run-distro.sh` tests the packages in a repository after building them, and
+any dependencies, from source. The location of source dependencies are checked
+out from the locations specified in a [distribution
 file](http://www.ros.org/reps/rep-0143.html#distribution-file) to test a list
 of packages.
 
 For example, this command checks out the `herbpy` repository and its
 dependencies from source and runs its tests:
 ```shell
-$ ./run-distro.sh distro.yml --repository=herbpy
-```
-
-Some repositories contain more than one package. For example, the `comps`
-repository contains `cbirrt2`, `generalik`, and `manipulation2`. This command
-will build and test all three packages:
-```shell
-$ ./run-distro.sh distro.yml --repository=comps
-```
-It is also possible to test a subset of packages in the repository:
-```shell
-$ ./run-distro.sh distro.yml --package=cbirrt2 --package=generalik
+$ ./run-distro.sh distro.yml herbpy
 ```
