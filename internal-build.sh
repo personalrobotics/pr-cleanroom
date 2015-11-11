@@ -17,3 +17,5 @@ rosdep update
 rosdep install -y --ignore-src --rosdistro=indigo --from-paths src
 
 ${CATKIN_BUILD} -- "$@"
+
+rospack profile > /dev/null
