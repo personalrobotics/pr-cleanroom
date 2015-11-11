@@ -27,6 +27,7 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   python-wstool \
   python-vcstools \
   ros-indigo-ros-core \
+  ros-indigo-rospack \
   subversion
 
 # Add the PR apt repository.
