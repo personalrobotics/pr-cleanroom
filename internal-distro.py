@@ -153,14 +153,11 @@ def main():
             if client.detect_presence():
                 detected_url = client.get_url()
 
-                # TODO: Modify this check to make https and URIs compare equal.
-                """
                 if not client.url_matches(detected_url, repository.vcs_uri):
                     raise ValueError(
                         'Directory "{:s}" already contains a VCS repository with'
                         ' URL "{:s}". This does not match the requested URL'
                         ' "{:s}".'.format(repository_name, detected_url, repository.vcs_uri))
-                """
 
                 client.update(version=repository.vcs_version)
             else:
