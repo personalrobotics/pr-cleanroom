@@ -16,4 +16,4 @@ ${SUDO} apt-get update
 rosdep update
 rosdep install -y --ignore-src --rosdistro=indigo --from-paths src
 
-${CATKIN_BUILD} -- "$@"
+${CATKIN_BUILD} -p1 -- "$@"
