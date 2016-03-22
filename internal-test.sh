@@ -9,17 +9,33 @@ export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
 . devel/setup.bash
 
 if [ "$#" -eq 0 ]; then
-    set -x
     ${CATKIN_BUILD} --catkin-make-args tests
     ${CATKIN_BUILD} --catkin-make-args run_tests
-    set +x
 else
-    set -x
-    ${CATKIN_BUILD} --no-deps -p1 --catkin-make-args tests -- "$@"
-    ${CATKIN_BUILD} --no-deps -p1 --catkin-make-args run_tests -- "$@"
-    set +x
-fi
+    # Split the arguments into Catkin and non-Catkin packages.
+    declare -a PACKAGES_CATKIN
+    declare -a PACKAGES_CMAKE
 
+    for package_name in "$@"; do
+        if $(rospack find "${package_name}"); then
+            PACKAGES_CATKIN+="${package_name}"
+        else
+            PACKAGES_CMAKE+="${package_name}"
+        fi
+    done
+
+    ${CATKIN_BUILD} --no-deps -p1 --make-args tests -- "$@"
+
+    if [ "${#PACKAGES_CATKIN[@]}" -ne 0 ]; then
+        ${CATKIN_BUILD} --no-deps -p1 --catkin-make-args run_tests -- "${PACKAGES_CATKIN}"
+    fi
+
+    if [ "${#PACKAGES_CMAKE[@]}" -ne 0 ]; then
+        set -e
+        ${CATKIN_BUILD} --no-deps -p1 --make-args test -- "${PACKAGES_CMAKE}"
+        set +e
+    fi
+fi
 
 mkdir -p "${OUTPUT_PATH}"
 
