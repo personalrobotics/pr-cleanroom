@@ -1,6 +1,6 @@
 #!/bin/bash
 SUDO='sudo -n'
-CATKIN_BUILD='catkin build --no-status'
+CATKIN_BUILD='catkin build --no-status -p 1 -i'
 
 export SHELL="${SHELL=/bin/bash}"
 export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"

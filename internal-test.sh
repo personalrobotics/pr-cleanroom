@@ -1,5 +1,5 @@
 #!/bin/bash
-CATKIN_BUILD='catkin build --no-status'
+CATKIN_BUILD='catkin build --no-status -p 1 -i'
 BUILD_PATH='build'
 OUTPUT_PATH='test_results'
 
@@ -15,8 +15,8 @@ if [ "$#" -eq 0 ]; then
     set +x
 else
     set -x
-    ${CATKIN_BUILD} --no-deps -p1 --catkin-make-args tests -- "$@"
-    ${CATKIN_BUILD} --no-deps -p1 --catkin-make-args run_tests -- "$@"
+    ${CATKIN_BUILD} --no-deps --catkin-make-args tests -- "$@"
+    ${CATKIN_BUILD} --no-deps --catkin-make-args run_tests -- "$@"
     set +x
 fi
 
