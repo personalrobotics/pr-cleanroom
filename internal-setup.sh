@@ -11,6 +11,9 @@ if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
   ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
 fi
 
+# Add the DART apt repository.
+${SUDO} apt-add-repository -y ppa:dartsim
+
 # Install ROS build tools.
 ${SUDO} ${APTGET} update
 ${SUDO} ${APTGET} install --no-install-recommends \
