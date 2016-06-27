@@ -12,6 +12,8 @@ if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
 fi
 
 # Add the DART apt repository.
+${SUDO} apt-add-repository -y ppa:libccd-debs
+${SUDO} apt-add-repository -y ppa:fcl-debs
 ${SUDO} apt-add-repository -y ppa:dartsim
 
 # Install ROS build tools.
