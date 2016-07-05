@@ -8,6 +8,8 @@ export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
 
 . devel/setup.bash
 
+set -x
+
 if [ "$#" -eq 0 ]; then
     set -x
     ${CATKIN_BUILD} --catkin-make-args tests
