@@ -10,7 +10,7 @@ fi
 export SHELL="${SHELL=/bin/bash}"
 export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
 
-set -x
+set -xe
 catkin init
 catkin config --extend /opt/ros/indigo ${CATKIN_CONFIG_OPTIONS}
 
