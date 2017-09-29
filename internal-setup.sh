@@ -15,6 +15,7 @@ fi
 ${SUDO} apt-add-repository -y ppa:libccd-debs
 ${SUDO} apt-add-repository -y ppa:fcl-debs
 ${SUDO} apt-add-repository -y ppa:dartsim
+${SUDO} add-apt-repository -y ppa:personalrobotics/ppa
 
 # Install ROS build tools.
 ${SUDO} ${APTGET} update
@@ -33,10 +34,6 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   python-vcstools \
   ros-indigo-ros-core \
   subversion
-
-# Add the PR apt repository.
-${CURL} 'https://www.personalrobotics.ri.cmu.edu/files/personalrobotics.gpg' | ${SUDO} apt-key add -
-${SUDO} sh -c 'echo "deb http://packages.personalrobotics.ri.cmu.edu/public trusty main" > /etc/apt/sources.list.d/personalrobotics.list'
 
 # Setup rosdep with our custom keys.
 ${SUDO} rosdep init || true
