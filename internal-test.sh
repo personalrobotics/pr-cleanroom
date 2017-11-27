@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 CATKIN_BUILD='catkin build --no-status -p 1 -i'
 BUILD_PATH='build'
 OUTPUT_PATH='test_results'
