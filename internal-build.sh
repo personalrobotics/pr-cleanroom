@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 SUDO='sudo -n'
 CATKIN_BUILD='catkin build --no-status -p 1 -i'
 
