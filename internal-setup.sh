@@ -23,6 +23,7 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   build-essential \
   ca-certificates \
   curl \
+  doxygen \
   eatmydata \
   git \
   mercurial \
