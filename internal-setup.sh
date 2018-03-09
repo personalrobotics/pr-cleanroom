@@ -3,9 +3,9 @@ APTGET='apt-get -qqy'
 CURL='curl -sS'
 SUDO='sudo -n'
 if [ `lsb_release -cs` == "trusty" ]; then
-  ROS_DISTRO='indigo'
+  ROS_DISTRO=indigo
 elif [ `lsb_release -cs` == "xenial" ]; then
-  ROS_DISTRO='lunar'
+  ROS_DISTRO=lunar
 fi
 
 set -x
