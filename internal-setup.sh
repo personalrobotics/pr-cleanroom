@@ -12,13 +12,9 @@ set -x
 
 # Add the ROS apt repository.
 if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
-  ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu ${ROS_DISTRO} main" > /etc/apt/sources.list.d/ros-latest.list'
+  ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
   ${SUDO} apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 fi
-
-# test code
-echo ${ROS_DISTRO}
-cat /etc/apt/sources.list.d/ros-latest.list
 
 # Add necessary apt repositories.
 if [ `lsb_release -cs` = "trusty" ]; then
