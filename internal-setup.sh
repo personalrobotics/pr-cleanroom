@@ -16,6 +16,10 @@ if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
   ${SUDO} apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 fi
 
+# test code
+echo ${ROS_DISTRO}
+echo /etc/apt/sources.list.d/ros-latest.list
+
 # Add necessary apt repositories.
 if [ `lsb_release -cs` = "trusty" ]; then
   ${SUDO} apt-add-repository -y ppa:libccd-debs
