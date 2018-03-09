@@ -7,9 +7,9 @@ if [ -z ${CATKIN_CONFIG_OPTIONS+x} ]; then
   CATKIN_CONFIG_OPTIONS='-DCMAKE_BUILD_TYPE=Release'
 fi
 
-if [ `lsb_release -cs` == "trusty" ]; then
+if [ `lsb_release -cs` = "trusty" ]; then
   ROS_DISTRO='indigo'
-elif [ `lsb_release -cs` == "xenial" ]; then
+elif [ `lsb_release -cs` = "xenial" ]; then
   ROS_DISTRO='lunar'
 fi
 
