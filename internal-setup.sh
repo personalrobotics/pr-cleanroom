@@ -2,18 +2,25 @@
 APTGET='apt-get -qqy'
 CURL='curl -sS'
 SUDO='sudo -n'
+if [ `lsb_release -cs` == "trusty" ]; then
+  ROS_DISTRO='indigo'
+elif [ `lsb_release -cs` == "xenial" ]; then
+  ROS_DISTRO='lunar'
+fi
 
 set -x
 
 # Add the ROS apt repository.
 if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
-  ${SUDO} apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
-  ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
+  ${SUDO} apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+  ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu ${ROS_DISTRO} main" > /etc/apt/sources.list.d/ros-latest.list'
 fi
 
-# Add the DART apt repository.
-${SUDO} apt-add-repository -y ppa:libccd-debs
-${SUDO} apt-add-repository -y ppa:fcl-debs
+# Add necessary apt repositories.
+if [ `lsb_release -cs` == "trusty" ]; then
+  ${SUDO} apt-add-repository -y ppa:libccd-debs
+  ${SUDO} apt-add-repository -y ppa:fcl-debs
+fi
 ${SUDO} apt-add-repository -y ppa:dartsim
 ${SUDO} add-apt-repository -y ppa:personalrobotics/ppa
 
@@ -33,7 +40,7 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   python-rosinstall \
   python-wstool \
   python-vcstools \
-  ros-indigo-ros-core \
+  ros-${ROS_DISTRO}-ros-core \
   subversion
 
 # Setup rosdep with our custom keys.
