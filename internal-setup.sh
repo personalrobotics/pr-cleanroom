@@ -3,18 +3,21 @@ APTGET='apt-get -qqy'
 CURL='curl -sS'
 SUDO='sudo -n'
 if [ `lsb_release -cs` == "trusty" ]; then
-  ROS_DISTRO=indigo
+  ROS_DISTRO='indigo'
 elif [ `lsb_release -cs` == "xenial" ]; then
-  ROS_DISTRO=lunar
+  ROS_DISTRO='lunar'
 fi
 
 set -x
 
 # Add the ROS apt repository.
 if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
-  ${SUDO} apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
   ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu ${ROS_DISTRO} main" > /etc/apt/sources.list.d/ros-latest.list'
+  ${SUDO} apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 fi
+
+# For test
+cat /etc/apt/sources.list.d/ros-latest.list
 
 # Add necessary apt repositories.
 if [ `lsb_release -cs` == "trusty" ]; then
