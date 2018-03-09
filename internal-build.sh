@@ -1,6 +1,7 @@
 #!/bin/bash
 SUDO='sudo -n'
 CATKIN_BUILD='catkin build --no-status -p 1 -i'
+LIBEATMYDATA_PATH=$(find /usr -name libeatmydata.so)
 
 # Default options for 'catkin config'.
 if [ -z ${CATKIN_CONFIG_OPTIONS+x} ]; then
@@ -14,7 +15,7 @@ elif [ `lsb_release -cs` = "xenial" ]; then
 fi
 
 export SHELL="${SHELL=/bin/bash}"
-export LD_PRELOAD="/usr/lib/libeatmydata/libeatmydata.so:${LD_PRELOAD}"
+export LD_PRELOAD="${LIBEATMYDATA_PATH}:${LD_PRELOAD}"
 
 set -xe
 catkin init
