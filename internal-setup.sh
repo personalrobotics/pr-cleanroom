@@ -18,7 +18,7 @@ fi
 
 # test code
 echo ${ROS_DISTRO}
-echo /etc/apt/sources.list.d/ros-latest.list
+cat /etc/apt/sources.list.d/ros-latest.list
 
 # Add necessary apt repositories.
 if [ `lsb_release -cs` = "trusty" ]; then
