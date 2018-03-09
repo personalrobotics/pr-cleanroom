@@ -2,9 +2,9 @@
 APTGET='apt-get -qqy'
 CURL='curl -sS'
 SUDO='sudo -n'
-if [ `lsb_release -cs` == "trusty" ]; then
+if [ `lsb_release -cs` = "trusty" ]; then
   ROS_DISTRO='indigo'
-elif [ `lsb_release -cs` == "xenial" ]; then
+elif [ `lsb_release -cs` = "xenial" ]; then
   ROS_DISTRO='lunar'
 fi
 
@@ -20,7 +20,7 @@ fi
 cat /etc/apt/sources.list.d/ros-latest.list
 
 # Add necessary apt repositories.
-if [ `lsb_release -cs` == "trusty" ]; then
+if [ `lsb_release -cs` = "trusty" ]; then
   ${SUDO} apt-add-repository -y ppa:libccd-debs
   ${SUDO} apt-add-repository -y ppa:fcl-debs
 fi
