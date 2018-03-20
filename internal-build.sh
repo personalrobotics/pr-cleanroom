@@ -11,7 +11,7 @@ fi
 if [ `lsb_release -sc` = "trusty" ]; then
   ROS_DISTRO='indigo'
 elif [ `lsb_release -sc` = "xenial" ]; then
-  ROS_DISTRO='lunar'
+  ROS_DISTRO='kinetic'
 else
   echo "error: Ubuntu $(lsb_release -sc) is not supported."
   exit 1
