@@ -76,6 +76,7 @@ def main():
     parser.add_argument('distribution_file', type=str)
     parser.add_argument('--package', type=str, action='append', dest='target_packages', default=[])
     parser.add_argument('--repository', type=str, action='append', dest='target_repositories', default=[])
+    parser.add_argument('--manifest_name', type=str, default='package.xml')
     args = parser.parse_args()
 
     if not os.path.exists(args.workspace):
@@ -166,7 +167,7 @@ def main():
             # Search for packages in the repository.
             repository_package_map = dict()
             rospkg.list_by_path(
-                manifest_name='package.xml',
+                manifest_name=args.manifest_name,
                 path=repository.location,
                 cache=repository_package_map)
 
@@ -202,7 +203,7 @@ def main():
             installed_packages.update(repository_package_map.iterkeys())
 
         # Crawl dependencies.
-        package_xml_path = os.path.join(package.location, 'package.xml')
+        package_xml_path = os.path.join(package.location, args.manifest_name)
         package_manifest = parse_package(package_xml_path)
 
         all_depends = set()
