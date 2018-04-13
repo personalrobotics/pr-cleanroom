@@ -76,6 +76,7 @@ def main():
     parser.add_argument('distribution_file', type=str)
     parser.add_argument('--package', type=str, action='append', dest='target_packages', default=[])
     parser.add_argument('--repository', type=str, action='append', dest='target_repositories', default=[])
+    parser.add_argument('--manifest_file', type=str, default='package.xml')
     args = parser.parse_args()
 
     if not os.path.exists(args.workspace):
@@ -202,7 +203,7 @@ def main():
             installed_packages.update(repository_package_map.iterkeys())
 
         # Crawl dependencies.
-        package_xml_path = os.path.join(package.location, 'package-full.xml')
+        package_xml_path = os.path.join(package.location, args.manifest_file)
         if not os.path.isfile(package_xml_path):
             package_xml_path = os.path.join(package.location, 'package.xml')
         package_manifest = parse_package(package_xml_path)
