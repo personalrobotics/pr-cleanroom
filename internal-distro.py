@@ -2,8 +2,9 @@
 from __future__ import print_function
 from collections import namedtuple
 import argparse
-import sys
 import os
+import re
+import sys
 import vcstools
 import yaml
 import rospkg
@@ -70,12 +71,85 @@ class WstoolClient(object):
         return self.rosinstall_file.__exit__(type, value, traceback)
 
 
+def rewrite_optional_dependencies(package_xml_path, rewrite_dependencies):
+    """
+    Rewrite the original package.xml file to convert optional dependencies to
+    required dependencies. This is necessary because the package.xml format does
+    not support optional dependencies.
+
+    Optional dependency groups are specified in package.xml by surrounding them
+    with `BEGIN` and `END` comments and commenting out each `depend` tag.
+
+        <!-- BEGIN [GROUP NAME] DEPENDENCIES -->
+        <!-- <depend>...</depend> -->
+        <!-- END [GROUP NAME] DEPENDENCIES -->
+
+    The rewrite_dependencies argument is a list of group names that will be
+    converted into required dependencies. Optional dependency groups that are
+    described in package.xml but are not in rewrite_dependencies will be
+    unchanged.
+    """
+    with open(package_xml_path) as f:
+        lines = f.readlines()
+
+    optional_dependency_groups = {} # group_name -> (start, end)
+    begin_re = re.compile(r'<!-- BEGIN (?P<name>.*) DEPENDENCIES -->')
+    end_re = re.compile(r'<!-- END (?P<name>.*) DEPENDENCIES -->')
+    for i, line in enumerate(lines):
+        begin_match = re.search(begin_re, line)
+        end_match = re.search(end_re, line)
+
+        if begin_match:
+            group_name = begin_match.group('name')
+            if group_name not in rewrite_dependencies:
+                continue
+
+            if group_name in optional_dependency_groups:
+                raise ValueError('Dependency group "{0}" has multiple BEGINs.'.format(group_name))
+            optional_dependency_groups[group_name] = [i, None]
+
+        if end_match:
+            group_name = end_match.group('name')
+            if group_name not in rewrite_dependencies:
+                continue
+
+            if group_name not in optional_dependency_groups:
+                raise ValueError('Dependency group "{0}" has END before BEGIN.'.format(group_name))
+            if optional_dependency_groups[group_name][1] is not None:
+                raise ValueError('Dependency group "{0}" has multiple ENDs.'.format(group_name))
+            optional_dependency_groups[group_name][1] = i
+
+    # Note: this regular expression assumes that only one commented <depend> tag
+    # is in each line.
+    depend_re = re.compile(
+        r"""
+        ^(?P<pre>.*?)                               # before the <depend>
+        <!--\s*(?P<tag><depend>.*?</depend>)\s*-->  # the commented <depend>
+        (?P<post>.*?\n+)$                           # after the <depend>
+        """, re.X)
+    for name, line_range in optional_dependency_groups.items():
+        print('Rewriting dependency group "{0}"'.format(name))
+        start = line_range[0] + 1
+        end = line_range[1]
+        for i in range(start, end):
+            depend_match = re.match(depend_re, lines[i])
+            if depend_match:
+                lines[i] = ''.join(depend_match.groups())
+
+    with open(package_xml_path, 'w') as f:
+        f.writelines(lines)
+
+    return package_xml_path
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--workspace', type=str, default='.')
     parser.add_argument('distribution_file', type=str)
     parser.add_argument('--package', type=str, action='append', dest='target_packages', default=[])
     parser.add_argument('--repository', type=str, action='append', dest='target_repositories', default=[])
+    parser.add_argument('--optional-dependency', '-o',
+                        type=str, action='append', dest='optional_dependency_groups', default=[])
     args = parser.parse_args()
 
     if not os.path.exists(args.workspace):
@@ -202,7 +276,9 @@ def main():
             installed_packages.update(repository_package_map.iterkeys())
 
         # Crawl dependencies.
-        package_xml_path = os.path.join(package.location, 'package.xml')
+        package_xml_path = rewrite_optional_dependencies(
+            os.path.join(package.location, 'package.xml'),
+            args.optional_dependency_groups)
         package_manifest = parse_package(package_xml_path)
 
         all_depends = set()
