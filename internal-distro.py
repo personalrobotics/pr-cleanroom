@@ -73,21 +73,20 @@ class WstoolClient(object):
 
 def rewrite_optional_dependencies(package_xml_path, rewrite_dependencies):
     """
-    Rewrite the original package.xml file to convert optional dependencies to
-    required dependencies. This is necessary because the package.xml format does
-    not support optional dependencies.
+    Rewrite the original package.xml file to comment out optional dependencies.
+    This is necessary because the package.xml format does not support optional
+    dependencies.
 
     Optional dependency groups are specified in package.xml by surrounding them
     with `BEGIN` and `END` comments and commenting out each `depend` tag.
 
         <!-- BEGIN [GROUP NAME] DEPENDENCIES -->
-        <!-- <depend>...</depend> -->
+        <depend>...</depend>
         <!-- END [GROUP NAME] DEPENDENCIES -->
 
     The rewrite_dependencies argument is a list of group names that will be
-    converted into required dependencies. Optional dependency groups that are
-    described in package.xml but are not in rewrite_dependencies will be
-    unchanged.
+    commented out. Optional dependency groups that are described in package.xml
+    but are not in rewrite_dependencies will be unchanged.
     """
     with open(package_xml_path) as f:
         lines = f.readlines()
