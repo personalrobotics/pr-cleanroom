@@ -3,6 +3,7 @@ from __future__ import print_function
 from collections import namedtuple
 import argparse
 import os
+import re
 import sys
 import vcstools
 import yaml
@@ -214,6 +215,7 @@ def main():
 
         # Remove optional dependencies
         if args.required_dependencies_only:
+            optional_depends = set()
             for export in package_manifest.exports:
                 if export.tagname != 'optional':
                     continue
@@ -224,7 +226,24 @@ def main():
                         'Optional dependency "{:s}" not found in package "{:s}".'.format(
                             dependency_name, package.name))
 
-                all_depends.remove(dependency_name)
+                optional_depends.add(dependency_name)
+
+            # Note: this rewriting procedure assumes that only one <depend> tag
+            # is on each line.
+            depend_re = re.compile(r'<depend>(.*?)</depend>')
+            def is_optional_dependency(line):
+                depend_matches = re.findall(depend_re, line)
+                return len(depend_matches) == 1 and depend_matches[0] in optional_depends
+
+            with open(package_xml_path) as f:
+                lines = f.readlines()
+
+            with open(package_xml_path, 'w') as f:
+                f.writelines(
+                    [line for line in lines if not is_optional_dependency(line)]
+                )
+
+            all_depends -= optional_depends
 
         # Only keep the dependencies that we know about.
         def annotate_package_name(package_name):
