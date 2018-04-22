@@ -2,14 +2,14 @@
 from __future__ import print_function
 from collections import namedtuple
 import argparse
-import sys
 import os
+import sys
 import vcstools
 import yaml
 import rospkg
 from catkin_pkg.package import parse_package
 
-DEPENDENCY_TYPES =  [
+DEPENDENCY_TYPES = [
     'build_depends',
     'build_export_depends',
     'buildtool_depends',
@@ -76,6 +76,7 @@ def main():
     parser.add_argument('distribution_file', type=str)
     parser.add_argument('--package', type=str, action='append', dest='target_packages', default=[])
     parser.add_argument('--repository', type=str, action='append', dest='target_repositories', default=[])
+    parser.add_argument('--required-only', action='store_true', dest='required_dependencies_only')
     args = parser.parse_args()
 
     if not os.path.exists(args.workspace):
@@ -94,7 +95,8 @@ def main():
 
     repositories = {
         name: Repository(name, options)
-        for name, options in packages_raw.iteritems() }
+        for name, options in packages_raw.iteritems()
+    }
 
     # Build a map from package name to the repository that contains it, based
     # soley on the information in the distribution file.
@@ -209,6 +211,20 @@ def main():
         for dependency_type in DEPENDENCY_TYPES:
             for dependency in getattr(package_manifest, dependency_type):
                 all_depends.add(dependency.name)
+
+        # Remove optional dependencies
+        if args.required_dependencies_only:
+            for export in package_manifest.exports:
+                if export.tagname != 'optional':
+                    continue
+
+                dependency_name = export.content
+                if dependency_name not in all_depends:
+                    raise ValueError(
+                        'Optional dependency "{:s}" not found in package "{:s}".'.format(
+                            dependency_name, package.name))
+
+                all_depends.remove(dependency_name)
 
         # Only keep the dependencies that we know about.
         def annotate_package_name(package_name):
