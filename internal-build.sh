@@ -33,4 +33,6 @@ ${SUDO} apt-get update
 rosdep update
 rosdep install -y --ignore-src --rosdistro=${ROS_DISTRO} --from-paths src
 
-${CATKIN_BUILD} -p1 -- "$@"
+if [ "$#" -gt 0 ]; then
+  ${CATKIN_BUILD} -p1 -- "$@"
+fi
