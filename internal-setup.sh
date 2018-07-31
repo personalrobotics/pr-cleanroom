@@ -31,6 +31,12 @@ ${SUDO} add-apt-repository -y ppa:personalrobotics/ppa
 
 # Install ROS build tools.
 ${SUDO} ${APTGET} update
+
+# Upgrade to dpkg >= 1.17.5ubuntu5.8, which fixes
+# https://bugs.launchpad.net/ubuntu/+source/dpkg/+bug/1730627
+# (https://github.com/travis-ci/travis-ci/issues/9361)
+${SUDO} ${APTGET} install dpkg
+
 ${SUDO} ${APTGET} install --no-install-recommends \
   build-essential \
   ca-certificates \
