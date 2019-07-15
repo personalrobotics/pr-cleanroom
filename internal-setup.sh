@@ -15,6 +15,9 @@ fi
 
 set -x
 
+# Required by apt-add-repository.
+${SUDO} ${APTGET} install python-software-properties
+
 # Add the ROS apt repository.
 if [ ! -f /etc/apt/sources.list.d/ros-latest.list ]; then
   ${SUDO} sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
