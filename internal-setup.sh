@@ -54,6 +54,7 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   ros-${ROS_DISTRO}-ros-core \
   subversion
 
+# Needed for parsing distribution.yml
 $SUDO pip install pyyaml -U
 
 # Setup rosdep with our custom keys.
