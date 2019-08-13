@@ -54,6 +54,9 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   ros-${ROS_DISTRO}-ros-core \
   subversion
 
+# Needed for parsing distribution.yml
+$SUDO pip install pyyaml -U
+
 # Setup rosdep with our custom keys.
 ${SUDO} rosdep init || true
 ${SUDO} ${CURL} -o '/etc/ros/rosdep/sources.list.d/10-pr.list' 'https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/rosdep/10-pr.list'
