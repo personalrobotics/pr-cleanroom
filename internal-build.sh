@@ -14,6 +14,8 @@ elif [ `lsb_release -sc` = "xenial" ]; then
   ROS_DISTRO='kinetic'
 elif [ `lsb_release -sc` = "bionic" ]; then
   ROS_DISTRO='melodic'
+elif [ `lsb_release -sc` = "focal" ]; then
+  ROS_DISTRO='noetic'
 else
   echo "error: Ubuntu $(lsb_release -sc) is not supported."
   exit 1
