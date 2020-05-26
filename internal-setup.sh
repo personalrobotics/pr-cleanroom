@@ -47,14 +47,26 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   eatmydata \
   git \
   mercurial \
-  python-catkin-tools \
-  python-pip \
-  python-rosdep \
-  python-rosinstall \
-  python-wstool \
-  python-vcstools \
   ros-${ROS_DISTRO}-ros-core \
   subversion
+
+if [ `lsb_release -sc` = "focal" ]; then
+  ${SUDO} ${APTGET} install --no-install-recommends \
+    python3-catkin-tools \
+    python3-pip \
+    python3-rosdep \
+    python3-rosinstall \
+    python3-wstool \
+    python3-vcstools
+else
+  ${SUDO} ${APTGET} install --no-install-recommends \
+    python-catkin-tools \
+    python-pip \
+    python-rosdep \
+    python-rosinstall \
+    python-wstool \
+    python-vcstools
+fi
 
 # Setup rosdep with our custom keys.
 ${SUDO} rosdep init || true
