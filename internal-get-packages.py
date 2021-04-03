@@ -8,6 +8,7 @@ import vcstools
 import yaml
 import rospkg
 from catkin_pkg.package import parse_package
+from future.utils import iteritems
 
 DEPENDENCY_TYPES =  [
     'build_depends',
@@ -87,7 +88,7 @@ def main():
 
     repositories = {
         name: Repository(name, options)
-        for name, options in packages_raw.iteritems() }
+        for name, options in iteritems(packages_raw) }
 
     print(' '.join(repositories[args.repository].packages))
 

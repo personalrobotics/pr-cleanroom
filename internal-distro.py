@@ -9,6 +9,7 @@ import vcstools
 import yaml
 import rospkg
 from catkin_pkg.package import parse_package
+from future.utils import iteritems
 
 DEPENDENCY_TYPES = [
     'build_depends',
@@ -96,7 +97,7 @@ def main():
 
     repositories = {
         name: Repository(name, options)
-        for name, options in packages_raw.iteritems()
+        for name, options in iteritems(packages_raw)
     }
 
     # Build a map from package name to the repository that contains it, based
@@ -181,7 +182,7 @@ def main():
                         repository.vcs_uri, package.name))
 
             # Mark all of these packages as installed.
-            for package_name, location in repository_package_map.iteritems():
+            for package_name, location in iteritems(repository_package_map):
                 installed_package = package_map.get(package_name)
 
                 if installed_package is None:

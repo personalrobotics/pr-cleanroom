@@ -3,10 +3,11 @@ from __future__ import print_function
 from urlparse import urlparse
 import sys
 import yaml
+from future.utils import iteritems
 
 distribution = yaml.load(sys.stdin)
 
-for repository_name, repository in distribution['repositories'].iteritems():
+for repository_name, repository in iteritems(distribution['repositories']):
     url = urlparse(repository['source']['url'])
 
     if url.scheme == 'https' and url.netloc == 'github.com':
