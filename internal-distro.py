@@ -9,7 +9,7 @@ import vcstools
 import yaml
 import rospkg
 from catkin_pkg.package import parse_package
-from future.utils import iteritems
+from future.utils import iteritems, itervalues
 
 DEPENDENCY_TYPES = [
     'build_depends',
@@ -100,11 +100,14 @@ def main():
         for name, options in iteritems(packages_raw)
     }
 
+    # Ignore YAML load warnings, we trust ourselves
+    yaml.warnings({'YAMLLoadWarning': False})
+
     # Build a map from package name to the repository that contains it, based
     # soley on the information in the distribution file.
     distribution_package_map = dict()
 
-    for repository in repositories.itervalues():
+    for repository in itervalues(repositories):
         for package_name in repository.packages:
             existing_repository = distribution_package_map.get(package_name)
             if existing_repository is not None:
