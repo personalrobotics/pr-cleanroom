@@ -51,7 +51,6 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   subversion
 
 if [ `lsb_release -sc` = "focal" ]; then
-  ${SUDO} echo "Set disable_coredump false" >> /etc/sudo.conf  # https://github.com/sudo-project/sudo/issues/42
   ${SUDO} ${APTGET} install --no-install-recommends \
     python3-catkin-tools \
     python3-pip \
