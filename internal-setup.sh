@@ -58,7 +58,8 @@ if [ `lsb_release -sc` = "focal" ]; then
     python3-rosinstall \
     python3-wstool \
     python3-vcstools \
-    python3-future
+    python3-future \
+    python3-osrf-pycommon
 else
   ${SUDO} ${APTGET} install --no-install-recommends \
     python-catkin-tools \

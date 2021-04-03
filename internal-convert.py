@@ -5,7 +5,7 @@ import sys
 import yaml
 from future.utils import iteritems
 
-distribution = yaml.load(sys.stdin)
+distribution = yaml.unsafe_load(sys.stdin)
 
 for repository_name, repository in iteritems(distribution['repositories']):
     url = urlparse(repository['source']['url'])
