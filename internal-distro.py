@@ -9,7 +9,7 @@ import vcstools
 import yaml
 import rospkg
 from catkin_pkg.package import parse_package
-from future.utils import iteritems, itervalues
+from future.utils import iteritems, itervalues, iterkeys
 
 DEPENDENCY_TYPES = [
     'build_depends',
@@ -89,7 +89,7 @@ def main():
 
     # Load the distribution file.
     with open(args.distribution_file, 'rb') as distribution_file:
-        distribution_raw = yaml.load(distribution_file)
+        distribution_raw = yaml.unsafe_load(distribution_file)
 
     packages_raw = distribution_raw.get('repositories')
     if packages_raw is None:
@@ -99,9 +99,6 @@ def main():
         name: Repository(name, options)
         for name, options in iteritems(packages_raw)
     }
-
-    # Ignore YAML load warnings, we trust ourselves
-    yaml.warnings({'YAMLLoadWarning': False})
 
     # Build a map from package name to the repository that contains it, based
     # soley on the information in the distribution file.
@@ -206,7 +203,7 @@ def main():
                 print('    Found package "{:s}" => {:s}'.format(
                     installed_package.name, installed_package.location))
 
-            installed_packages.update(repository_package_map.iterkeys())
+            installed_packages.update(iterkeys(repository_package_map))
 
         # Crawl dependencies.
         package_xml_path = os.path.join(package.location, 'package.xml')
@@ -259,7 +256,7 @@ def main():
                 return package_name
 
         known_depends = all_depends.intersection(
-            distribution_package_map.iterkeys())
+            iterkeys(distribution_package_map))
         if known_depends:
             print('  Depends on:', ' '.join(
                 sorted(map(annotate_package_name, known_depends))))
