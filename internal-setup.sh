@@ -57,7 +57,8 @@ if [ `lsb_release -sc` = "focal" ]; then
     python3-rosdep \
     python3-rosinstall \
     python3-wstool \
-    python3-vcstools
+    python3-vcstools \
+    python3-future
 else
   ${SUDO} ${APTGET} install --no-install-recommends \
     python-catkin-tools \
@@ -65,7 +66,8 @@ else
     python-rosdep \
     python-rosinstall \
     python-wstool \
-    python-vcstools
+    python-vcstools \
+    python-future
 fi
 
 # Setup rosdep with our custom keys.
