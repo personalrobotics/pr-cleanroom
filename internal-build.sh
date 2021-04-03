@@ -33,7 +33,7 @@ find src -name manifest.xml -delete
 
 ${SUDO} apt-get update
 rosdep update
-rosdep install -y --ignore-src --rosdistro=${ROS_DISTRO} --from-paths src
+rosdep install -y --ignore-src --rosdistro=${ROS_DISTRO} --from-paths src --skip-keys "python"
 
 if [ "$#" -gt 0 ]; then
   ${CATKIN_BUILD} -p1 -- "$@"
