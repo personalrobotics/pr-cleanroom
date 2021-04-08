@@ -9,7 +9,6 @@ import vcstools
 import yaml
 import rospkg
 from catkin_pkg.package import parse_package
-from future.utils import iteritems, itervalues, iterkeys
 
 DEPENDENCY_TYPES = [
     'build_depends',
@@ -97,14 +96,14 @@ def main():
 
     repositories = {
         name: Repository(name, options)
-        for name, options in iteritems(packages_raw)
+        for name, options in packages_raw.items()
     }
 
     # Build a map from package name to the repository that contains it, based
     # soley on the information in the distribution file.
     distribution_package_map = dict()
 
-    for repository in itervalues(repositories):
+    for repository in repositories.values():
         for package_name in repository.packages:
             existing_repository = distribution_package_map.get(package_name)
             if existing_repository is not None:
@@ -182,7 +181,7 @@ def main():
                         repository.vcs_uri, package.name))
 
             # Mark all of these packages as installed.
-            for package_name, location in iteritems(repository_package_map):
+            for package_name, location in repository_package_map.items():
                 installed_package = package_map.get(package_name)
 
                 if installed_package is None:
@@ -203,7 +202,7 @@ def main():
                 print('    Found package "{:s}" => {:s}'.format(
                     installed_package.name, installed_package.location))
 
-            installed_packages.update(iterkeys(repository_package_map))
+            installed_packages.update(repository_package_map.keys())
 
         # Crawl dependencies.
         package_xml_path = os.path.join(package.location, 'package.xml')
@@ -256,7 +255,7 @@ def main():
                 return package_name
 
         known_depends = all_depends.intersection(
-            iterkeys(distribution_package_map))
+            distribution_package_map.keys())
         if known_depends:
             print('  Depends on:', ' '.join(
                 sorted(map(annotate_package_name, known_depends))))
