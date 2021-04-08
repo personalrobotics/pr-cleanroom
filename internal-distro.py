@@ -89,7 +89,7 @@ def main():
 
     # Load the distribution file.
     with open(args.distribution_file, 'rb') as distribution_file:
-        distribution_raw = yaml.unsafe_load(distribution_file)
+        distribution_raw = yaml.load(distribution_file, Loader=yaml.FullLoader)
 
     packages_raw = distribution_raw.get('repositories')
     if packages_raw is None:
