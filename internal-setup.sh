@@ -8,6 +8,8 @@ elif [ `lsb_release -sc` = "xenial" ]; then
   ROS_DISTRO='kinetic'
 elif [ `lsb_release -sc` = "bionic" ]; then
   ROS_DISTRO='melodic'
+elif [ `lsb_release -sc` = "focal" ]; then
+  ROS_DISTRO='noetic'
 else
   echo "error: Ubuntu $(lsb_release -sc) is not supported."
   exit 1
@@ -45,14 +47,29 @@ ${SUDO} ${APTGET} install --no-install-recommends \
   eatmydata \
   git \
   mercurial \
-  python-catkin-tools \
-  python-pip \
-  python-rosdep \
-  python-rosinstall \
-  python-wstool \
-  python-vcstools \
   ros-${ROS_DISTRO}-ros-core \
   subversion
+
+if [ `lsb_release -sc` = "focal" ]; then
+  ${SUDO} ${APTGET} install --no-install-recommends \
+    python3-catkin-tools \
+    python3-pip \
+    python3-rosdep \
+    python3-rosinstall \
+    python3-wstool \
+    python3-vcstools \
+    python3-future \
+    python3-osrf-pycommon
+else
+  ${SUDO} ${APTGET} install --no-install-recommends \
+    python-catkin-tools \
+    python-pip \
+    python-rosdep \
+    python-rosinstall \
+    python-wstool \
+    python-vcstools \
+    python-future
+fi
 
 # Setup rosdep with our custom keys.
 ${SUDO} rosdep init || true
