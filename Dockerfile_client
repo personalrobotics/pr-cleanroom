@@ -1,4 +1,4 @@
-FROM personalrobotics/openrave
+FROM personalrobotics/ros-openrave
 MAINTAINER Michael Koval <mkoval@cs.cmu.edu>
 ENV DEBIAN_FRONTEND noninteractive
 
