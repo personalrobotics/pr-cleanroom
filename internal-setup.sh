@@ -28,7 +28,7 @@ if [ `lsb_release -cs` = "trusty" ]; then
   ${SUDO} apt-add-repository -y ppa:libccd-debs
   ${SUDO} apt-add-repository -y ppa:fcl-debs
 fi
-${SUDO} apt-add-repository -y ppa:dartsim
+# ${SUDO} apt-add-repository -y ppa:dartsim
 ${SUDO} add-apt-repository -y ppa:personalrobotics/ppa
 
 # Install ROS build tools.
